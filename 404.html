@@ -102,6 +102,37 @@
     }
   </style>
   <link rel="stylesheet" href="/styles/lazy-styles.css">
+
+
+<!-- === Smart 404 PDP eager redirect (Demo Builder) === -->
+<script nonce="aem">
+  (function () {
+    if (document.prerendering) return;
+    var m = location.pathname.match(/^\/products\/([^/]+)\/([^/]+)$/);
+    if (!m) return;
+    var lc = '/products/' + m[1].toLowerCase() + '/' + m[2].toLowerCase();
+    // Mixed case: redirect to lowercase before any paint
+    if (lc !== location.pathname) {
+      location.replace(lc);
+      return;
+    }
+    // Already lowercase. If this is a 404 page (cold path: SKU never
+    // published), the storefront's default 404 chrome will paint before
+    // delayed.js loads and runs our cold-path snippet. Hide just the
+    // <main> (not the whole body) so the storefront's header and footer
+    // — populated by scripts.js as usual — stay visible while we wait.
+    // User sees real storefront chrome around a loading area, not a
+    // blank page. On non-404 pages window.isErrorPage is undefined so
+    // we skip the hide.
+    if (window.isErrorPage && !new URLSearchParams(location.search).has('pdpRetry')) {
+      var s = document.createElement('style');
+      s.id = 'smart-404-cold-hide';
+      s.textContent = 'main { visibility: hidden; }';
+      document.head.appendChild(s);
+    }
+  })();
+</script>
+<!-- === end Smart 404 PDP eager redirect === -->
 </head>
 
 <body>
