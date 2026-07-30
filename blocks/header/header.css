@@ -1179,3 +1179,53 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
     gap: 0 20px;
   }
 }
+
+/* ---------------------------------------------------------------------
+ * Departments mega-menu panel fix
+ * The boilerplate sizes .submenu-wrapper with `width: 100%`, but the
+ * wrapper is absolutely positioned inside the "Departments" <li>, so 100%
+ * resolves against that ~99px trigger while the inner <ul> is fixed at
+ * --desktop-large-panel-width (900px). Result: a 900px grid of category
+ * links spilling out of a 99px white panel.
+ *
+ * Give the panel an explicit width that matches its contents, and pin it
+ * to the nav's left edge rather than the trigger's, so it reads as a
+ * proper dropdown underlay.
+ * ------------------------------------------------------------------- */
+@media (min-width: 900px) {
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] .submenu-wrapper {
+    /* content width (900) + horizontal padding (40 * 2) */
+    width: 980px;
+    max-width: calc(100vw - 64px);
+    min-height: 0;
+    padding: 24px 40px;
+    box-shadow: var(--shape-shadow-2);
+    border-radius: 0 0 var(--shape-border-radius-2) var(--shape-border-radius-2);
+  }
+
+  /* keep the panel inside the viewport: it is positioned relative to the
+     narrow trigger, so shift it back by the trigger's offset in the row */
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] .submenu-wrapper {
+    left: 0;
+  }
+
+  /* let the category grid fill the panel instead of overflowing it */
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul {
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+    overflow: visible;
+    gap: 4px 24px;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul > li {
+    flex: 0 0 calc(25% - 18px);
+    min-width: 0;
+    max-width: none;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul > li a {
+    font-size: 14px;
+    white-space: normal;
+  }
+}
