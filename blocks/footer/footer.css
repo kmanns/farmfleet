@@ -103,10 +103,20 @@ footer .ff-footer-main > div {
 }
 
 /* brand / signup column */
+footer .ff-footer-main picture,
+footer .ff-footer-main picture img,
 footer .ff-footer-main img {
+  display: block;
   width: 220px;
+  max-width: 100%;
   height: auto;
   margin-bottom: 12px;
+}
+
+/* the logo paragraph must not collapse around the picture element */
+footer .ff-footer-main > div > div:first-child p:first-of-type {
+  display: block;
+  min-height: 60px;
 }
 
 footer .ff-footer-main > div > div:first-child p {
