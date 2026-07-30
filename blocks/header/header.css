@@ -1114,3 +1114,59 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
 }
 
 
+/* ---------------------------------------------------------------------
+ * Nav overflow fix
+ * The nav-sections link row uses `white-space: nowrap` + `flex: 1 1 auto`,
+ * so with a long category list it grows past the viewport and pushes the
+ * nav-tools cluster (wishlist / cart / account dropins) off-screen to the
+ * right. Constrain the row so it can shrink, and tighten the horizontal
+ * rhythm so the remaining links plus the dropin icons all fit.
+ * ------------------------------------------------------------------- */
+@media (min-width: 900px) {
+  /* allow the link row to shrink below its content width instead of
+     forcing the flex container wider than the nav */
+  header nav .nav-sections {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* keep the tools cluster pinned and never let it be squeezed out */
+  header nav .nav-tools {
+    flex: 0 0 auto;
+  }
+
+  /* tighter rhythm: smaller gaps + slightly smaller type so more of the
+     category list survives before it needs trimming */
+  header nav .nav-sections .default-content-wrapper > ul {
+    gap: 14px;
+    min-width: 0;
+    flex-wrap: nowrap;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li {
+    padding: 0 2px;
+    min-width: 0;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li a {
+    font-size: 13px;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child {
+    padding-right: 10px;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child + li {
+    padding-left: 10px;
+  }
+}
+
+/* Narrower desktop widths: drop the trailing links rather than overflow.
+   Purely cosmetic for the demo — the links still exist in the nav
+   document and reappear at wider viewports and in the mobile menu. */
+@media (min-width: 900px) and (max-width: 1200px) {
+  header nav .nav-sections .default-content-wrapper > ul > li:nth-last-child(-n+2) {
+    display: none;
+  }
+}
