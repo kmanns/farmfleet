@@ -221,7 +221,17 @@ export default async function decorate(block) {
       });
   }
 
-  const navTools = nav.querySelector('.nav-tools');
+  let navTools = nav.querySelector('.nav-tools');
+
+  // Create the nav-tools section if it is missing. DA.live strips empty
+  // divs during content processing, leaving nav with only 2 sections
+  // (brand, sections) instead of 3 — without this guard header.js throws
+  // "Cannot read properties of null".
+  if (!navTools) {
+    navTools = document.createElement('div');
+    navTools.classList.add('nav-tools');
+    nav.appendChild(navTools);
+  }
 
   /** Wishlist */
   const wishlist = document.createRange().createContextualFragment(`
