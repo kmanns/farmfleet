@@ -1128,7 +1128,7 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
   header nav .nav-sections {
     flex: 0 1 auto;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* keep the tools cluster pinned and never let it be squeezed out */
@@ -1146,7 +1146,7 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
 
   header nav .nav-sections .default-content-wrapper > ul > li {
     padding: 0 2px;
-    min-width: 0;
+    flex: 0 0 auto;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li a {
