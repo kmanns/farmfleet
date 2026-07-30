@@ -857,3 +857,260 @@ body:has(.seller-assisted-buying-banner) {
   }
 }
 
+/* ===================================================================== */
+/* Farm & Fleet brand restyle                                            */
+/* Adds a promo utility bar, restyles the existing nav-brand/nav-tools   */
+/* elements (search dropin, auth dropdown, cart) and the nav-sections    */
+/* links/mega-menu. Does NOT rename any class the dropins or header.js   */
+/* rely on -- only new classes are introduced, and only cosmetic         */
+/* properties are added to existing selectors.                          */
+/* ===================================================================== */
+
+:root {
+  --ff-brand-red: #e31b23;
+  --ff-brand-navy: #0054a4;
+  --ff-brand-navy-dark: #024a76; /* darker navy used for nav link text */
+  --ff-utility-bg: #e8e8e8;
+}
+
+/* Row 1: thin promo/utility bar above the nav.  Static content is
+   acceptable per spec; markup for this is injected by header.js only if
+   a `.nav-promo-bar` element exists in the nav fragment. If authors do
+   not add one, this rule harmlessly matches nothing. */
+.ff-promo-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 36px;
+  background: var(--ff-utility-bg);
+  color: var(--color-neutral-800);
+  font-size: 13px;
+}
+
+.ff-promo-bar button {
+  border: 0;
+  background: transparent;
+  color: var(--ff-brand-navy);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+}
+
+/* Row 2: main bar -- brand, search, account, cart */
+header nav .nav-brand a {
+  display: flex;
+  align-items: center;
+}
+
+header nav .nav-brand img,
+header nav .nav-brand svg {
+  width: 160px;
+  height: auto;
+}
+
+@media (min-width: 900px) {
+  header nav {
+    align-items: center;
+  }
+}
+
+/* Search dropin -> large rounded pill, centered */
+@media (min-width: 900px) {
+  header nav .nav-tools-wrapper.search-wrapper {
+    flex: 1 1 auto;
+    max-width: 620px;
+    margin: 0 24px;
+    position: static;
+  }
+
+  header nav .nav-tools button.nav-search-button {
+    display: none;
+  }
+
+  header .nav-search-panel {
+    position: static;
+    display: block !important;
+    width: 100%;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  header .nav-search-panel input {
+    border: 1.5px solid var(--ff-brand-navy);
+    border-radius: 999px;
+    padding: 12px 48px 12px 20px;
+    font-size: 15px;
+  }
+
+  header .nav-search-panel .dropin-input-container {
+    position: relative;
+  }
+
+  header .nav-search-panel .dropin-input-container::after {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    background-image: url('../../icons/search.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    pointer-events: none;
+  }
+
+  header .nav-search-panel .search-bar-result {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background: var(--background-color);
+    box-shadow: var(--shape-shadow-2);
+    border-radius: 8px;
+  }
+}
+
+/* Auth dropdown -> two-line "Hello, Sign In / Account & Orders" */
+.dropdown-wrapper.nav-tools-wrapper .nav-dropdown-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-neutral-900);
+}
+
+.dropdown-wrapper.nav-tools-wrapper .nav-dropdown-button::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300549e' stroke-width='1.5'%3E%3Ccircle cx='12' cy='6' r='4'/%3E%3Cpath d='M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5Z'/%3E%3C/svg%3E");
+}
+
+@media (min-width: 900px) {
+  .dropdown-wrapper.nav-tools-wrapper .nav-dropdown-button {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    line-height: 1.2;
+  }
+
+  .dropdown-wrapper.nav-tools-wrapper .nav-dropdown-button::before {
+    display: none;
+  }
+
+  /* "Hello, Sign In" / "Hi, {name}" line -- rendered as the button's own
+     text by renderAuthDropdown.js; styled small + gray here. */
+  .dropdown-wrapper.nav-tools-wrapper .nav-dropdown-button {
+    font-size: 12px;
+    color: var(--color-neutral-700);
+  }
+
+  .dropdown-wrapper.nav-tools-wrapper .nav-dropdown-button::after {
+    content: 'Account & Orders';
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-neutral-900);
+  }
+}
+
+/* Cart icon in brand navy */
+header nav .nav-tools button.nav-cart-button {
+  filter: none;
+}
+
+header nav .nav-tools button.nav-cart-button[data-count]::after {
+  background-color: var(--ff-brand-red);
+}
+
+/* Row 3: nav-sections restyled as a left-aligned link bar with a
+   "Departments" mega-menu trigger as the first item. */
+@media (min-width: 900px) {
+  header nav .nav-wrapper {
+    border-bottom: none;
+  }
+
+  header .nav-sections-row {
+    border-top: 1px solid var(--color-neutral-300);
+    border-bottom: 1px solid var(--color-neutral-300);
+  }
+
+  header nav .nav-sections .default-content-wrapper>ul {
+    align-items: center;
+  }
+
+  header nav .nav-sections .default-content-wrapper>ul>li:first-child {
+    font-weight: 700;
+    position: relative;
+    padding-right: 16px;
+  }
+
+  header nav .nav-sections .default-content-wrapper>ul>li:first-child::after {
+    content: '';
+    display: inline-block;
+    margin-left: 6px;
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid currentcolor;
+    border-bottom: 1.5px solid currentcolor;
+    transform: rotate(45deg) translateY(-2px);
+  }
+
+  header nav .nav-sections .default-content-wrapper>ul>li:first-child + li {
+    border-left: 1px solid var(--color-neutral-400);
+    padding-left: 16px;
+  }
+
+  header nav .nav-sections .default-content-wrapper>ul>li a {
+    color: var(--color-neutral-900);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* "Find Your Store" highlighted as the active/utility link per the
+     reference design (first link after Departments). */
+  header nav .nav-sections .default-content-wrapper>ul>li:nth-child(2) a {
+    color: var(--ff-brand-navy);
+    text-decoration: underline;
+  }
+}
+
+/* Departments mega-menu: reuse the existing nav-drop submenu machinery,
+   just restyle the panel as a simple multi-item flyout. */
+@media (min-width: 900px) {
+  header nav .nav-sections .default-content-wrapper>ul>li:first-child ul {
+    display: none;
+  }
+
+  header nav .nav-sections .default-content-wrapper>ul>li:first-child[aria-expanded='true'] ul {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 8px 24px;
+    width: var(--desktop-large-panel-width);
+  }
+
+  header nav .nav-sections .default-content-wrapper>ul>li:first-child ul>li {
+    min-width: 180px;
+    max-width: none;
+    flex: 0 0 auto;
+  }
+}
+
+/* Mobile (<900px): keep existing hamburger/off-canvas behavior;
+   Departments simply becomes the first collapsible item in that list,
+   no special-casing needed since header.js already treats any nav-drop
+   uniformly. */
+@media (max-width: 899px) {
+  header nav .nav-brand img,
+  header nav .nav-brand svg {
+    width: 130px;
+  }
+}
+
+

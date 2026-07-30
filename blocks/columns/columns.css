@@ -31,3 +31,38 @@
     order: unset;
   }
 }
+
+/*
+ * Promo row variant: `Columns (promo)` in the block table, combined with
+ * the auto-added `columns-3-cols` class (from columns.js, based on child
+ * count) for a homepage 3-up promo card row: one larger card + two
+ * smaller cards side by side, each a single clickable image with copy
+ * baked into the image (no overlay text needed, but a heading is
+ * supported if authored).
+ */
+.columns.promo > div {
+  gap: var(--spacing-small);
+}
+
+.columns.promo .columns-img-col img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--shape-border-radius-2);
+}
+
+@media (min-width: 900px) {
+  .columns.promo.columns-3-cols > div {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .columns.promo.columns-3-cols > div > div {
+    flex: 1 1 0;
+  }
+
+  /* first column is the larger "half" promo, per the live reference
+     (708px-wide image vs. two 342px-wide images) -- roughly a 2:1:1 split */
+  .columns.promo.columns-3-cols > div > div:first-child {
+    flex: 2 1 0;
+  }
+}

@@ -64,3 +64,20 @@ This block does not emit or listen to any custom events. -->
 - **Missing Images**: If a card row has no image, only body content is displayed
 - **Empty Cards**: Empty rows are still rendered as cards with appropriate spacing
 - **Fallback Behavior**: Block gracefully handles missing or malformed content
+
+## Variants
+
+### Category Tiles (`Cards (category tiles)`)
+
+Adds the `category-tiles` class (block option `category tiles`) for a homepage department/category grid: small square product-photo tiles with a centered, bold, single-line-ish label beneath. Designed for ~10 tiles that wrap responsively (2-up on small mobile, up to a full row of 10 on desktop at 900px and wider).
+
+Example authoring structure (same two-column contract as the base block):
+
+```
+| Image                          | Label               |
+|---------------------------------|----------------------|
+| ![Clothing & Footwear](img.jpg) | [Clothing & Footwear](/clothing-and-footwear/) |
+| ![Home Basics](img.jpg)         | [Home Basics](/home-basics/) |
+```
+
+No JS changes are required for this variant; it is CSS-only (`cards.category-tiles` selectors in `cards.css`).

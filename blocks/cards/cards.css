@@ -29,3 +29,51 @@
   aspect-ratio: 4 / 3;
   object-fit: cover;
 }
+
+/*
+ * Category Tiles variant: `Cards (category tiles)` in the block table.
+ * Used for the homepage department/category grid: a row of small square
+ * tiles with a product photo and a centered bold label beneath. Wraps
+ * responsively, mobile-first (2-up) up to a full row of 10 on desktop.
+ */
+.cards.category-tiles > ul {
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--spacing-xsmall);
+}
+
+@media (min-width: 600px) {
+  .cards.category-tiles > ul {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .cards.category-tiles > ul {
+    grid-template-columns: repeat(10, 1fr);
+    gap: var(--spacing-small);
+  }
+}
+
+.cards.category-tiles > ul > li {
+  border-color: var(--color-neutral-400);
+}
+
+.cards.category-tiles .cards-card-image img {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  padding: var(--spacing-xsmall);
+  background-color: var(--color-neutral-50);
+}
+
+.cards.category-tiles .cards-card-body {
+  margin: 0 var(--spacing-xxsmall) var(--spacing-xsmall);
+  text-align: center;
+  font: var(--type-body-2-strong-font);
+  letter-spacing: var(--type-body-2-strong-letter-spacing);
+}
+
+.cards.category-tiles .cards-card-body p {
+  margin: 0;
+  font: var(--type-body-2-strong-font);
+  letter-spacing: var(--type-body-2-strong-letter-spacing);
+}

@@ -35,3 +35,38 @@
     padding: 40px 32px;
   }
 }
+
+/*
+ * Banner variant: `Hero (banner)` in the block table.
+ * Used for the homepage full-width promo banner: a single edge-to-edge
+ * clickable image with no overlaid heading (the copy is baked into the
+ * image itself). Falls back gracefully if a heading is authored anyway.
+ */
+.hero.banner {
+  padding: 0;
+  min-height: 0;
+}
+
+.hero.banner picture {
+  position: static;
+  z-index: auto;
+  inset: unset;
+}
+
+.hero.banner img {
+  width: 100%;
+  height: auto;
+  object-fit: unset;
+  display: block;
+}
+
+.hero.banner h1 {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: var(--spacing-small);
+  text-align: center;
+}
