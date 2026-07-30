@@ -1115,7 +1115,7 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
 
 
 /* ---------------------------------------------------------------------
- * Nav overflow fix
+ * Nav overflow fix (v2: rebalanced spacing)
  * The nav-sections link row uses `white-space: nowrap` + `flex: 1 1 auto`,
  * so with a long category list it grows past the viewport and pushes the
  * nav-tools cluster (wishlist / cart / account dropins) off-screen to the
@@ -1139,7 +1139,7 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
   /* tighter rhythm: smaller gaps + slightly smaller type so more of the
      category list survives before it needs trimming */
   header nav .nav-sections .default-content-wrapper > ul {
-    gap: 14px;
+    gap: 18px;
     min-width: 0;
     flex-wrap: nowrap;
   }
@@ -1150,7 +1150,8 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li a {
-    font-size: 13px;
+    font-size: 13.5px;
+    white-space: nowrap;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li:first-child {
@@ -1168,5 +1169,13 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
 @media (min-width: 900px) and (max-width: 1200px) {
   header nav .nav-sections .default-content-wrapper > ul > li:nth-last-child(-n+2) {
     display: none;
+  }
+}
+
+/* Reclaim horizontal space between the three nav areas so the link row
+   has room to breathe without clipping the final label. */
+@media (min-width: 900px) {
+  header nav {
+    gap: 0 20px;
   }
 }
