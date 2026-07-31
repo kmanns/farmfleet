@@ -1164,3 +1164,41 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
     padding-bottom: 6px;
   }
 }
+
+/* ---------------------------------------------------------------------
+ * Departments mega-menu: panel sizing (restored)
+ * Must come after the hover-bridge rules above so the width wins.
+ * The boilerplate sets `width: 100%` on .submenu-wrapper, which resolves
+ * against the ~99px "Departments" <li> rather than the nav, while the
+ * inner <ul> is fixed at --desktop-large-panel-width (900px). Without an
+ * explicit width the 900px grid spills out of a ~99px panel.
+ * ------------------------------------------------------------------- */
+@media (min-width: 900px) {
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] .submenu-wrapper {
+    width: 980px;
+    max-width: calc(100vw - 64px);
+    min-height: 0;
+    padding: 24px 40px;
+    box-shadow: var(--shape-shadow-2);
+    border-radius: 0 0 var(--shape-border-radius-2) var(--shape-border-radius-2);
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul {
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+    overflow: visible;
+    gap: 4px 24px;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul > li {
+    flex: 0 0 calc(25% - 18px);
+    min-width: 0;
+    max-width: none;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul > li a {
+    font-size: 14px;
+    white-space: normal;
+  }
+}
