@@ -1115,117 +1115,52 @@ header nav .nav-tools button.nav-cart-button[data-count]::after {
 
 
 /* ---------------------------------------------------------------------
- * Nav overflow fix (v2: rebalanced spacing)
- * The nav-sections link row uses `white-space: nowrap` + `flex: 1 1 auto`,
- * so with a long category list it grows past the viewport and pushes the
- * nav-tools cluster (wishlist / cart / account dropins) off-screen to the
- * right. Constrain the row so it can shrink, and tighten the horizontal
- * rhythm so the remaining links plus the dropin icons all fit.
+ * Departments mega-menu: make it reachable with the mouse
+ * The panel is positioned at top: 64px while the trigger <li> ends at
+ * 34px, leaving a ~30px dead zone. Moving the pointer down toward the
+ * panel exits the <li>, hover state is lost and the panel closes before
+ * it can be reached.
+ *
+ * Two-part fix, CSS only (header.js closes the panel only when the
+ * pointer leaves the whole <nav>, so no JS change is needed):
+ *   1. an invisible ::after bridge spanning the gap keeps the pointer
+ *      inside the trigger's hover region on the way down
+ *   2. the panel is pulled flush to the bottom of the nav row and given
+ *      a transparent top border, so trigger and panel actually touch
  * ------------------------------------------------------------------- */
 @media (min-width: 900px) {
-  /* allow the link row to shrink below its content width instead of
-     forcing the flex container wider than the nav */
-  header nav .nav-sections {
-    flex: 0 1 auto;
-    min-width: 0;
-    overflow: visible;
-  }
-
-  /* keep the tools cluster pinned and never let it be squeezed out */
-  header nav .nav-tools {
-    flex: 0 0 auto;
-  }
-
-  /* tighter rhythm: smaller gaps + slightly smaller type so more of the
-     category list survives before it needs trimming */
-  header nav .nav-sections .default-content-wrapper > ul {
-    gap: 18px;
-    min-width: 0;
-    flex-wrap: nowrap;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li {
-    padding: 0 2px;
-    flex: 0 0 auto;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li a {
-    font-size: 13.5px;
-    white-space: nowrap;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li:first-child {
-    padding-right: 10px;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li:first-child + li {
-    padding-left: 10px;
-  }
-}
-
-/* Narrower desktop widths: drop the trailing links rather than overflow.
-   Purely cosmetic for the demo — the links still exist in the nav
-   document and reappear at wider viewports and in the mobile menu. */
-@media (min-width: 900px) and (max-width: 1200px) {
-  header nav .nav-sections .default-content-wrapper > ul > li:nth-last-child(-n+2) {
+  /* 1. invisible hover bridge under the trigger */
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 34px;
+    /* sits above the nav-wrapper background but below the open panel */
+    z-index: 1;
+    /* only active while the menu is open, so it never blocks the links
+       to its right when the menu is closed */
     display: none;
   }
-}
 
-/* Reclaim horizontal space between the three nav areas so the link row
-   has room to breathe without clipping the final label. */
-@media (min-width: 900px) {
-  header nav {
-    gap: 0 20px;
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child:hover::after,
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true']::after {
+    display: block;
   }
-}
 
-/* ---------------------------------------------------------------------
- * Departments mega-menu panel fix
- * The boilerplate sizes .submenu-wrapper with `width: 100%`, but the
- * wrapper is absolutely positioned inside the "Departments" <li>, so 100%
- * resolves against that ~99px trigger while the inner <ul> is fixed at
- * --desktop-large-panel-width (900px). Result: a 900px grid of category
- * links spilling out of a 99px white panel.
- *
- * Give the panel an explicit width that matches its contents, and pin it
- * to the nav's left edge rather than the trigger's, so it reads as a
- * proper dropdown underlay.
- * ------------------------------------------------------------------- */
-@media (min-width: 900px) {
+  /* 2. close the gap: panel starts right where the nav row ends and
+     carries a transparent top band so there is no uncovered strip */
   header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] .submenu-wrapper {
-    /* content width (900) + horizontal padding (40 * 2) */
-    width: 980px;
-    max-width: calc(100vw - 64px);
-    min-height: 0;
-    padding: 24px 40px;
-    box-shadow: var(--shape-shadow-2);
-    border-radius: 0 0 var(--shape-border-radius-2) var(--shape-border-radius-2);
+    top: calc(100% + 4px);
+    border-top: 12px solid transparent;
+    background-clip: padding-box;
+    z-index: 2;
   }
 
-  /* keep the panel inside the viewport: it is positioned relative to the
-     narrow trigger, so shift it back by the trigger's offset in the row */
-  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] .submenu-wrapper {
-    left: 0;
-  }
-
-  /* let the category grid fill the panel instead of overflowing it */
-  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul {
-    width: 100%;
-    max-width: 100%;
-    max-height: none;
-    overflow: visible;
-    gap: 4px 24px;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul > li {
-    flex: 0 0 calc(25% - 18px);
-    min-width: 0;
-    max-width: none;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li:first-child[aria-expanded='true'] ul > li a {
-    font-size: 14px;
-    white-space: normal;
+  /* keep a comfortable hit area on the trigger itself */
+  header nav .nav-sections .default-content-wrapper > ul > li:first-child {
+    padding-top: 6px;
+    padding-bottom: 6px;
   }
 }
