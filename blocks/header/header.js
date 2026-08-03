@@ -485,6 +485,18 @@ export default async function decorate(block) {
     }
   });
 
+  // On desktop the search field is rendered as an always-visible inline
+  // pill (see header.css), not a click-to-reveal popover, so the search
+  // button that normally triggers loading is hidden. Without this, the
+  // Input component was never mounted into the empty #search-bar-form and
+  // the search box appeared blank/non-functional. Load it eagerly here,
+  // and again if the viewport crosses into desktop width later.
+  const ensureDesktopSearchLoaded = () => {
+    if (isDesktop.matches) toggleSearch(true);
+  };
+  ensureDesktopSearchLoaded();
+  isDesktop.addEventListener('change', ensureDesktopSearchLoaded);
+
   // Close panels when clicking outside
   document.addEventListener('click', (e) => {
     // Check if undo is enabled for mini cart
