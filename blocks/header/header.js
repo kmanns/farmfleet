@@ -252,6 +252,24 @@ export default async function decorate(block) {
     window.location.href = rootLink(wishlistPath);
   });
 
+  /** Search */
+  const searchFragment = document.createRange().createContextualFragment(`
+  <div class="search-wrapper nav-tools-wrapper">
+    <button type="button" class="nav-search-button">Search</button>
+    <div class="nav-search-input nav-search-panel nav-tools-panel">
+      <form id="search-bar-form"></form>
+      <div class="search-bar-result" style="display: none;"></div>
+    </div>
+  </div>
+  `);
+
+  navTools.append(searchFragment);
+
+  const searchPanel = navTools.querySelector('.nav-search-panel');
+  const searchButton = navTools.querySelector('.nav-search-button');
+  const searchForm = searchPanel.querySelector('#search-bar-form');
+  const searchResult = searchPanel.querySelector('.search-bar-result');
+
   /** Mini Cart */
   const excludeMiniCartFromPaths = ['/checkout'];
 
@@ -354,24 +372,6 @@ export default async function decorate(block) {
       cartButton.removeAttribute('data-count');
     }
   }, { eager: true });
-
-  /** Search */
-  const searchFragment = document.createRange().createContextualFragment(`
-  <div class="search-wrapper nav-tools-wrapper">
-    <button type="button" class="nav-search-button">Search</button>
-    <div class="nav-search-input nav-search-panel nav-tools-panel">
-      <form id="search-bar-form"></form>
-      <div class="search-bar-result" style="display: none;"></div>
-    </div>
-  </div>
-  `);
-
-  navTools.append(searchFragment);
-
-  const searchPanel = navTools.querySelector('.nav-search-panel');
-  const searchButton = navTools.querySelector('.nav-search-button');
-  const searchForm = searchPanel.querySelector('#search-bar-form');
-  const searchResult = searchPanel.querySelector('.search-bar-result');
 
   async function toggleSearch(state) {
     const pageSize = 4;
@@ -484,18 +484,6 @@ export default async function decorate(block) {
       overlay.classList.remove('show');
     }
   });
-
-  // On desktop the search field is rendered as an always-visible inline
-  // pill (see header.css), not a click-to-reveal popover, so the search
-  // button that normally triggers loading is hidden. Without this, the
-  // Input component was never mounted into the empty #search-bar-form and
-  // the search box appeared blank/non-functional. Load it eagerly here,
-  // and again if the viewport crosses into desktop width later.
-  const ensureDesktopSearchLoaded = () => {
-    if (isDesktop.matches) toggleSearch(true);
-  };
-  ensureDesktopSearchLoaded();
-  isDesktop.addEventListener('change', ensureDesktopSearchLoaded);
 
   // Close panels when clicking outside
   document.addEventListener('click', (e) => {
