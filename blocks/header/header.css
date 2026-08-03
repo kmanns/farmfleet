@@ -918,62 +918,43 @@ header nav .nav-brand svg {
   }
 }
 
-/* Search dropin -> large rounded pill, centered */
-@media (min-width: 900px) {
-  header nav .nav-tools-wrapper.search-wrapper {
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: 480px;
-    margin: 0 24px;
-    position: static;
-  }
+/* Search -> icon button next to wishlist/cart, opening a popover panel
+   (same pattern as wishlist/cart). The earlier "always-visible inline
+   pill" design fought with the boilerplate's .nav-tools-panel positioning
+   rules (both match the shared `.nav-tools-panel` class, and the pill's
+   `position: static` override lost the specificity fight to
+   `header nav .nav-tools-panel { position: absolute; top: var(--nav-height) }`),
+   which is why the search box rendered detached below the nav bar. Using
+   the icon + popover keeps search visually consistent with the other
+   nav-tools icons and avoids re-fighting that specificity battle. */
+header .nav-search-panel {
+  border-radius: 8px;
+}
 
-  header nav .nav-tools button.nav-search-button {
-    display: none;
-  }
+header .nav-search-panel input {
+  border: 1.5px solid var(--ff-brand-navy);
+  border-radius: 999px;
+  padding: 12px 48px 12px 20px;
+  font-size: 15px;
+}
 
-  header .nav-search-panel {
-    position: static;
-    display: block !important;
-    width: 100%;
-    box-shadow: none;
-    padding: 0;
-  }
+header .nav-search-panel .dropin-input-container {
+  position: relative;
+}
 
-  header .nav-search-panel input {
-    border: 1.5px solid var(--ff-brand-navy);
-    border-radius: 999px;
-    padding: 12px 48px 12px 20px;
-    font-size: 15px;
-  }
-
-  header .nav-search-panel .dropin-input-container {
-    position: relative;
-  }
-
-  header .nav-search-panel .dropin-input-container::after {
-    content: '';
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    background-image: url('../../icons/search.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    pointer-events: none;
-  }
-
-  header .nav-search-panel .search-bar-result {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    background: var(--background-color);
-    box-shadow: var(--shape-shadow-2);
-    border-radius: 8px;
-  }
+header .nav-search-panel .dropin-input-container::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  background-image: url('../../icons/search.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
 }
 
 /* Auth dropdown -> two-line "Hello, Sign In / Account & Orders" */
