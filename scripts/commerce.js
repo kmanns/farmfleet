@@ -380,6 +380,15 @@ export function rootLink(link) {
  */
 function buildTemplateColumns(doc) {
   const columns = doc.querySelectorAll('main > div.section[data-column-width]');
+  if (!columns.length) return;
+
+  // Apply flex layout to main so sections with --column-width form a row
+  const main = doc.querySelector('main');
+  if (main) {
+    main.style.setProperty('display', 'flex');
+    main.style.setProperty('flex-wrap', 'wrap');
+    main.style.setProperty('align-items', 'flex-start');
+  }
 
   columns.forEach((column) => {
     const columnWidth = column.getAttribute('data-column-width');
@@ -387,6 +396,7 @@ function buildTemplateColumns(doc) {
 
     if (columnWidth) {
       column.style.setProperty('--column-width', columnWidth);
+      column.style.setProperty('flex', '0 0 var(--column-width)');
       column.removeAttribute('data-column-width');
     }
 
@@ -404,6 +414,14 @@ function buildTemplateColumns(doc) {
 export function applyTemplates(doc) {
   if (doc.body.classList.contains('columns')) {
     buildTemplateColumns(doc);
+  } else {
+    // Fallback: detect column layout from section metadata even when body.columns
+    // class is absent (e.g. account pages that embed column-width section metadata
+    // but don't declare template: columns in page metadata).
+    const hasColumnSections = doc.querySelector('main > div.section[data-column-width]');
+    if (hasColumnSections) {
+      buildTemplateColumns(doc);
+    }
   }
 }
 
