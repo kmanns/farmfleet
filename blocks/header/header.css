@@ -172,6 +172,7 @@ header nav .nav-brand img {
 header nav .nav-sections {
   grid-area: sections;
   flex: 1 1 auto;
+  min-width: 0;
   display: none;
   visibility: hidden;
 }
@@ -333,6 +334,7 @@ header nav .nav-tools {
   gap: var(--spacing-small);
   align-items: center;
   background: var(--background-color);
+  flex-shrink: 0;
   z-index: 3;
 }
 
@@ -920,7 +922,8 @@ header nav .nav-brand svg {
 @media (min-width: 900px) {
   header nav .nav-tools-wrapper.search-wrapper {
     flex: 1 1 auto;
-    max-width: 620px;
+    min-width: 0;
+    max-width: 480px;
     margin: 0 24px;
     position: static;
   }
