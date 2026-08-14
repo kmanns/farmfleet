@@ -35,6 +35,7 @@
   },
   "sidekick": {
     "project": "Demo Builder Project",
+    "editUrlPattern": "https://da.live/#/{{org}}/{{site}}{{pathname}}",
     "plugins": [
       {
         "id": "cif",
