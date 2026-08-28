@@ -741,6 +741,63 @@
           }
         }
       ]
+    },
+    {
+      "title": "Blaine’s Demo Blocks",
+      "id": "blaines-demo",
+      "components": [
+        {
+          "title": "Product Recommendations (Rules)",
+          "id": "product-recommendations-rules",
+          "model": "product-recommendations-rules",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Story Card Collection",
+          "id": "story-card-collection",
+          "model": "story-card-collection",
+          "filter": "story-card-collection",
+          "plugins": {
+            "da": {
+              "rows": 1,
+              "columns": 2
+            }
+          }
+        },
+        {
+          "title": "Story Card",
+          "id": "story-card",
+          "model": "story-card",
+          "plugins": {
+            "da": {
+              "rows": 1,
+              "columns": 2,
+              "fields": [
+                {
+                  "name": "image",
+                  "selector": "div:nth-child(1)>picture>img[src]"
+                },
+                {
+                  "name": "imageAlt",
+                  "selector": "div:nth-child(1)>picture>img[alt]"
+                },
+                {
+                  "name": "label",
+                  "selector": "div:nth-child(2)"
+                },
+                {
+                  "name": "link",
+                  "selector": "div:nth-child(2)>a[href]"
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
