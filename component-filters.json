@@ -49,7 +49,9 @@
       "product-teaser",
       "quote",
       "tabs",
-      "video"
+      "video",
+      "product-recommendations-rules",
+      "story-card-collection"
     ]
   },
   {
@@ -91,6 +93,12 @@
     "id": "tabs",
     "components": [
       "tabs-item"
+    ]
+  },
+  {
+    "id": "story-card-collection",
+    "components": [
+      "story-card"
     ]
   }
 ]

@@ -1,0 +1,107 @@
+{
+  "definitions": [
+    {
+      "title": "Product Recommendations (Rules)",
+      "id": "product-recommendations-rules",
+      "model": "product-recommendations-rules",
+      "plugins": {
+        "da": {
+          "type": "key-value-block"
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "product-recommendations-rules",
+      "fields": [
+        {
+          "component": "text",
+          "name": "title",
+          "label": "Title",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "category",
+          "label": "Category",
+          "description": "Category slug(s), comma-separated. In da.live use Sidekick > Library > Placeholders to insert. In Universal Editor use the Commerce picker."
+        },
+        {
+          "component": "text",
+          "name": "brand",
+          "label": "Brand",
+          "description": "Brand name(s), comma-separated."
+        },
+        {
+          "component": "number",
+          "name": "priceMin",
+          "label": "Price Min"
+        },
+        {
+          "component": "number",
+          "name": "priceMax",
+          "label": "Price Max"
+        },
+        {
+          "component": "text",
+          "name": "excludeKeywords",
+          "label": "Exclude Keywords",
+          "description": "Comma-separated keywords; any product matching one is removed."
+        },
+        {
+          "component": "select",
+          "name": "sort",
+          "label": "Sort",
+          "value": "bestseller",
+          "options": [
+            { "name": "Bestseller", "value": "bestseller" },
+            { "name": "Newest", "value": "newest" },
+            { "name": "Top Rated", "value": "top-rated" },
+            { "name": "Price: Low to High", "value": "price-asc" },
+            { "name": "Price: High to Low", "value": "price-desc" },
+            { "name": "Random", "value": "random" },
+            { "name": "Recommended (Sensei)", "value": "recommended" }
+          ]
+        },
+        {
+          "component": "select",
+          "name": "layout",
+          "label": "Layout",
+          "value": "carousel",
+          "options": [
+            { "name": "Carousel", "value": "carousel" },
+            { "name": "Grid", "value": "grid" },
+            { "name": "List (compact rows)", "value": "list" },
+            { "name": "Hero (featured + rail)", "value": "hero" }
+          ]
+        },
+        {
+          "component": "number",
+          "name": "itemCount",
+          "label": "Item Count",
+          "value": 4
+        },
+        {
+          "component": "text",
+          "name": "recId",
+          "label": "Rec ID",
+          "description": "Sensei mode only: required when Sort = Recommended (Sensei). Copy from Commerce Admin > Recommendations."
+        },
+        {
+          "component": "text",
+          "name": "currentSku",
+          "label": "Current SKU",
+          "description": "Sensei mode only: optional context SKU for recommendation types that need it."
+        },
+        {
+          "component": "number",
+          "name": "currentPrice",
+          "label": "Current Price",
+          "description": "Sensei mode only: optional context price for recommendation types that need it."
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

@@ -60,7 +60,28 @@
       "id": "product",
       "components": [
         {
-          "...": "../blocks/product-*/_*.json#/definitions"
+          "...": "../blocks/product-details/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/product-list-page/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/product-recommendations/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/product-teaser/_*.json#/definitions"
+        }
+      ]
+    },
+    {
+      "title": "Blaine's Demo Blocks",
+      "id": "blaines-demo",
+      "components": [
+        {
+          "...": "../blocks/product-recommendations-rules/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/story-card-collection/_*.json#/definitions"
         }
       ]
     }

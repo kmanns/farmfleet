@@ -164,7 +164,9 @@
         "product-list-page",
         "product-recommendations",
         "targeted-block",
-        "text"
+        "text",
+        "product-recommendations-rules",
+        "story-card-collection"
       ]
     }
   ]

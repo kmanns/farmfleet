@@ -1,0 +1,11 @@
+{
+  "blocks": {
+    "data": "/block-collection.json"
+  },
+  "placeholders": [
+    {
+      "name": "Categories",
+      "path": "/placeholders.json?sheet=categories"
+    }
+  ]
+}

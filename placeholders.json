@@ -1,0 +1,31 @@
+{
+  ":type": "multi-sheet",
+  ":version": 3,
+  ":names": [
+    "default",
+    "categories"
+  ],
+  "default": {
+    "total": 0,
+    "offset": 0,
+    "limit": 0,
+    "data": []
+  },
+  "categories": {
+    "total": 10,
+    "offset": 0,
+    "limit": 10,
+    "data": [
+      { "Key": "Clothing & Footwear", "Value": "clothing-and-footwear" },
+      { "Key": "Home Basics", "Value": "home-basics" },
+      { "Key": "Food & Beverage", "Value": "food-and-beverage" },
+      { "Key": "Lawn & Garden", "Value": "lawn-and-garden" },
+      { "Key": "Home Improvement", "Value": "home-improvement" },
+      { "Key": "Toys & Games", "Value": "toys-and-games" },
+      { "Key": "Sports & Outdoors", "Value": "sports-and-outdoors" },
+      { "Key": "Pet Supplies", "Value": "pet-supplies" },
+      { "Key": "Automotive", "Value": "automotive" },
+      { "Key": "Farm & Livestock", "Value": "farm-and-livestock" }
+    ]
+  }
+}
