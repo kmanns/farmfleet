@@ -1,0 +1,10 @@
+{
+  "total": 2,
+  "offset": 0,
+  "limit": 2,
+  "data": [
+    { "name": "Product Recommendations (Rules)", "path": "/block-collection/product-recommendations-rules" },
+    { "name": "Story Card Collection", "path": "/block-collection/story-card-collection" }
+  ],
+  ":type": "sheet"
+}
