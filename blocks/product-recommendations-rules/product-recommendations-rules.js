@@ -9,6 +9,60 @@ import { MOCK_PRODUCTS } from './mock-data.js';
 const CURRENCY_FMT = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
 /**
+ * The da.live Placeholders picker inserts a token like `{{Lawn & Garden}}`
+ * (the placeholder KEY wrapped in double braces), not the underlying slug.
+ * We resolve those tokens to their values from the published placeholders
+ * sheet so an author can pick a human-readable category/brand from the
+ * Library and the block still receives the machine value it needs.
+ *
+ * The map is cached per page. Lookups are case-insensitive and also accept
+ * the value itself (so a hand-typed slug or a token whose key IS the slug
+ * both resolve). Anything that doesn't match a placeholder is returned
+ * unchanged (e.g. a slug the author typed directly).
+ */
+let placeholderMapPromise = null;
+async function getPlaceholderMap() {
+  if (!placeholderMapPromise) {
+    placeholderMapPromise = (async () => {
+      const map = new Map();
+      try {
+        const res = await fetch('/placeholders.json');
+        if (res.ok) {
+          const json = await res.json();
+          const rows = Array.isArray(json.data) ? json.data : [];
+          rows.forEach(({ key, value }) => {
+            if (key !== undefined && value !== undefined) {
+              map.set(String(key).trim().toLowerCase(), String(value));
+              // let the slug resolve to itself too
+              map.set(String(value).trim().toLowerCase(), String(value));
+            }
+          });
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('[product-recommendations-rules] could not load placeholders', e);
+      }
+      return map;
+    })();
+  }
+  return placeholderMapPromise;
+}
+
+/**
+ * Resolve any `{{token}}` placeholder references (and plain values) in a
+ * list against the placeholder map. Non-matching entries pass through.
+ * @param {string[]} list lowercased tokens from parseList()
+ * @param {Map<string,string>} map
+ * @returns {string[]}
+ */
+function resolveTokens(list, map) {
+  return list.map((raw) => {
+    const stripped = raw.replace(/^\{\{\s*|\s*\}\}$/g, '').trim().toLowerCase();
+    return map.get(stripped) || stripped;
+  });
+}
+
+/**
  * Live Search query. `productSearch` is the correct production data path
  * for a rule-based recommendation rail. We fetch a generous page and let
  * the client-side rule engine do category/brand/price/exclude/sort so the
@@ -233,6 +287,14 @@ async function handOffToSensei(block, recipe) {
 
 export default async function decorate(block) {
   const recipe = readRecipe(block);
+
+  // Resolve any da.live Placeholders tokens ({{Lawn & Garden}}) that the
+  // author inserted via the Library into their real values (lawn-and-garden).
+  const phMap = await getPlaceholderMap();
+  recipe.categories = resolveTokens(recipe.categories, phMap);
+  recipe.brands = resolveTokens(recipe.brands, phMap);
+  // Sort can also be inserted from Placeholders as {{Bestseller}} etc.
+  recipe.sort = resolveTokens([recipe.sort], phMap)[0] || 'bestseller';
 
   if (recipe.sort === 'recommended') {
     if (recipe.recId) {
