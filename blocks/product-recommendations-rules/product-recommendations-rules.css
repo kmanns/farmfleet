@@ -40,6 +40,7 @@
 
 .product-recommendations-rules .prr-card__media {
   aspect-ratio: 1 / 1;
+  max-height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,9 +79,11 @@
 }
 
 /* --- Layout: carousel (default) --- */
+/* Fit all items on one row (one column each). If there are a lot of items
+   the row can still scroll horizontally; the min column width keeps cards
+   from getting too narrow. */
 .product-recommendations-rules.prr--carousel .prr__list {
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(180px, 1fr);
+  grid-template-columns: repeat(var(--prr-count, 4), minmax(0, 1fr));
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: 8px;
@@ -91,8 +94,9 @@
 }
 
 /* --- Layout: grid --- */
+/* Exactly one column per product so all items sit on a single row. */
 .product-recommendations-rules.prr--grid .prr__list {
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(var(--prr-count, 4), 1fr);
 }
 
 /* --- Layout: list (compact rows) --- */
@@ -138,5 +142,17 @@
   .product-recommendations-rules.prr--hero .prr-card--hero {
     grid-column: span 2;
     grid-row: span 1;
+  }
+
+  /* On small screens don't cram 4 across; grid falls back to 2 columns and
+     the carousel scrolls with comfortably-sized cards. */
+  .product-recommendations-rules.prr--grid .prr__list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .product-recommendations-rules.prr--carousel .prr__list {
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: minmax(150px, 1fr);
   }
 }

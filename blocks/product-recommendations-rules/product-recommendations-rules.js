@@ -304,6 +304,9 @@ function renderRail(block, recipe, products) {
 
   const list = document.createElement('div');
   list.className = 'prr__list';
+  // Expose the number of items actually shown so grid/carousel can lay them
+  // out on a single row (one column per product) instead of wrapping.
+  list.style.setProperty('--prr-count', String(products.length || 1));
 
   if (!products.length) {
     const empty = document.createElement('p');
