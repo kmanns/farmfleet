@@ -78,6 +78,8 @@ const PRODUCT_SEARCH_QUERY = `query RuleBasedRecs($phrase: String!, $pageSize: I
         sku
         name
         urlKey
+        inStock
+        categories { name slug }
         images(roles: ["thumbnail","small_image","image"]) { url label }
         ... on SimpleProductView {
           price { final { amount { value currency } } }
@@ -85,7 +87,7 @@ const PRODUCT_SEARCH_QUERY = `query RuleBasedRecs($phrase: String!, $pageSize: I
         ... on ComplexProductView {
           priceRange { minimum { final { amount { value currency } } } }
         }
-        attributes(roles: ["visible_in_compare_list"]) { name value }
+        attributes(roles: []) { name value }
       }
     }
   }
@@ -94,24 +96,40 @@ const PRODUCT_SEARCH_QUERY = `query RuleBasedRecs($phrase: String!, $pageSize: I
 /**
  * Normalize a live Catalog Service ProductView into the flat shape the
  * rule engine and renderer expect (matching mock-data.js).
+ *
+ * `categories` on ProductView is a list of CategoryProductView { name, slug }.
+ * We expose BOTH the slug (e.g. "power-tools") and a slugified name so an
+ * author's category rule matches whether they used the slug or the label.
+ * `brand` comes through the attributes list once the attribute is exported
+ * to Catalog Service.
  */
+function slugify(s) {
+  return String(s).toLowerCase().trim().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
 function normalizeLive(pv) {
   const price = pv?.price?.final?.amount?.value
     ?? pv?.priceRange?.minimum?.final?.amount?.value
     ?? 0;
   const attrs = Object.fromEntries((pv?.attributes || []).map((a) => [a.name, a.value]));
+  const categories = [];
+  (pv?.categories || []).forEach((c) => {
+    if (c.slug) categories.push(String(c.slug).toLowerCase());
+    if (c.name) categories.push(slugify(c.name));
+  });
   return {
     sku: pv.sku,
     name: pv.name,
     urlKey: pv.urlKey,
     price,
-    brand: attrs.brand || '',
-    categories: [],
-    keywords: [],
+    brand: attrs.brand || attrs.manufacturer || '',
+    categories: [...new Set(categories)],
+    keywords: [pv.name, attrs.brand, ...categories].filter(Boolean).map((s) => String(s).toLowerCase()),
     rating: Number(attrs.rating) || 0,
     created: attrs.created_at || '',
     bestsellerRank: undefined,
     image: pv?.images?.[0]?.url || '',
+    inStock: pv.inStock !== false,
   };
 }
 
@@ -124,22 +142,28 @@ function normalizeLive(pv) {
  * @returns {Promise<Array<Object>>}
  */
 export async function fetchRuleBasedProducts(rules) {
-  const phrase = (rules.categories[0] || rules.brands[0] || '').replace(/-/g, ' ');
+  // Fetch a broad candidate set with an empty phrase and let the client-side
+  // rule engine do category/brand/price/exclude/sort. This keeps the SAME
+  // logic across live and mock data, and — importantly — means the block
+  // still returns live products even when a category rule references a
+  // category that is defined in Admin but not yet exported to the Catalog
+  // Service index (a common lag). The `live` flag lets decorate() decide
+  // whether an empty filtered result should fall back to demo data.
   try {
     const data = await performCatalogServiceQuery(PRODUCT_SEARCH_QUERY, {
-      phrase,
+      phrase: '',
       pageSize: 40,
       filter: [],
     });
     const items = data?.productSearch?.items || [];
     if (items.length) {
-      return items.map((i) => normalizeLive(i.productView));
+      return { products: items.map((i) => normalizeLive(i.productView)), live: true };
     }
   } catch (e) {
     // eslint-disable-next-line no-console
     console.warn('[product-recommendations-rules] live query failed, using demo data', e);
   }
-  return MOCK_PRODUCTS;
+  return { products: MOCK_PRODUCTS, live: false };
 }
 
 /**
@@ -306,7 +330,20 @@ export default async function decorate(block) {
     console.warn('[product-recommendations-rules] Sort=recommended without a Rec ID; falling back to rule-based.');
   }
 
-  const products = await fetchRuleBasedProducts(recipe);
-  const result = evaluateRecipe(products, recipe);
+  const { products, live } = await fetchRuleBasedProducts(recipe);
+  let result = evaluateRecipe(products, recipe);
+
+  // If the recipe filtered live results down to nothing (e.g. the author's
+  // category exists in Admin but has not yet been exported to the Catalog
+  // Service index), still show real products: relax to the sorted, capped
+  // live set rather than an empty rail or demo data. Mock data is only used
+  // when there were no live products at all.
+  if (!result.length && live && products.length) {
+    const relaxed = { ...recipe, categories: [], brands: [] };
+    result = evaluateRecipe(products, relaxed);
+    // eslint-disable-next-line no-console
+    console.info('[product-recommendations-rules] recipe matched no live products; showing top live products instead.');
+  }
+
   renderRail(block, recipe, result);
 }
