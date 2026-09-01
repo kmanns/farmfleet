@@ -19,8 +19,21 @@ import {
   loadErrorPage,
   decorateSections,
   IS_UE,
-  IS_DA,
 } from './commerce.js';
+import {
+  runExperimentation,
+  runExperimentationLazy,
+} from './experiment-loader.js';
+
+// AEM Experimentation plugin config. `prodHost` marks the live host so the
+// simulation panel only runs off-prod (preview). Audiences can be extended.
+const experimentationConfig = {
+  prodHost: 'www.farmandfleet.com',
+  audiences: {
+    mobile: () => window.innerWidth < 600,
+    desktop: () => window.innerWidth >= 600,
+  },
+};
 
 /**
  * Builds hero block and prepends to main in a new section.
@@ -147,6 +160,9 @@ async function loadEager(doc) {
   if (main) {
     try {
       await initializeCommerce();
+      // Run experiments/campaigns/audiences before decoration so the correct
+      // variant content is in place. No-op on pages without experiment metadata.
+      await runExperimentation(doc, experimentationConfig);
       decorateMain(main);
       applyTemplates(doc);
       await loadCommerceEager();
@@ -209,6 +225,9 @@ async function loadLazy(doc) {
 
   loadCommerceLazy();
 
+  // Preview-only: loads the experiment simulation panel (variant switcher).
+  await runExperimentationLazy(doc, experimentationConfig);
+
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 }
@@ -245,7 +264,27 @@ loadPage();
 // === end Quick Edit dynamic import ===
 
 (async function loadDa() {
-  if (!IS_DA) return;
+  const { searchParams } = new URL(window.location.href);
   // eslint-disable-next-line import/no-unresolved
-  import('https://da.live/scripts/dapreview.js').then(({ default: daPreview }) => daPreview(loadPage));
+  if (searchParams.get('dapreview')) {
+    import('https://da.live/scripts/dapreview.js').then(({ default: daPreview }) => daPreview(loadPage));
+  }
+  // DA Experimentation Rail (da.live / Experience Workspace UI)
+  // eslint-disable-next-line import/no-unresolved
+  if (searchParams.get('daexperiment')) {
+    import('https://da.live/nx/public/plugins/exp/exp.js');
+  }
 }());
+
+// Load the sidekick module (hosts the Experimentation rail toggle) when the
+// AEM Sidekick is present.
+function loadSidekick() {
+  if (document.querySelector('aem-sidekick')) {
+    import('./sidekick.js');
+    return;
+  }
+  document.addEventListener('sidekick-ready', () => {
+    import('./sidekick.js');
+  }, { once: true });
+}
+loadSidekick();

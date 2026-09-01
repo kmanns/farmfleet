@@ -65,6 +65,15 @@
           "preview"
         ],
         "event": "quick-edit"
+      },
+      {
+        "id": "experimentation",
+        "title": "Experimentation",
+        "environments": [
+          "dev",
+          "preview"
+        ],
+        "event": "experimentation"
       }
     ]
   }
