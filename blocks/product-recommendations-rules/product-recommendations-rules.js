@@ -202,6 +202,55 @@ function readRecipe(block) {
   };
 }
 
+/**
+ * Build a <picture> for an image URL.
+ *
+ * Catalog Service returns AEM Assets *delivery* URLs
+ * (https://delivery-<...>.adobeaemcloud.com/adobe/assets/urn:aaid:aem:<id>).
+ * Those do NOT work with the Helix/EDS image pipeline that
+ * createOptimizedPicture() assumes — they need the AEM Assets delivery
+ * format `{base}/{assetId}/as/{name}.{fmt}?width=<w>` instead (same as the
+ * boilerplate's product-teaser). We detect that host and render accordingly;
+ * any other URL (e.g. the bundled demo images) falls back to
+ * createOptimizedPicture().
+ */
+function isAemAssetsUrl(url) {
+  return /\/adobe\/assets\//.test(url) || /adobeaemcloud\.com/.test(url);
+}
+
+function renderAemAssetsPicture(imageUrl, alt, name, size = 400) {
+  const parts = imageUrl.split('/');
+  const assetId = parts[parts.length - 1];
+  const baseUrl = imageUrl.replace(`/${assetId}`, '');
+  const seoName = (name || 'product').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'product';
+  const urlFor = (w, fmt) => {
+    const u = new URL(baseUrl, window.location);
+    u.pathname = `${u.pathname}/${assetId}/as/${seoName}.${fmt}`;
+    u.searchParams.set('width', w);
+    return u.toString();
+  };
+  const srcset = (w, fmt) => `${urlFor(w, fmt)} 1x, ${urlFor(w * 2, fmt)} 2x`;
+  const picture = document.createElement('picture');
+  const webp = document.createElement('source');
+  webp.type = 'image/webp';
+  webp.srcset = srcset(size, 'webp');
+  const jpg = document.createElement('source');
+  jpg.srcset = srcset(size, 'jpg');
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  img.alt = alt || '';
+  img.src = urlFor(size, 'jpg');
+  picture.append(webp, jpg, img);
+  return picture;
+}
+
+function buildPicture(p) {
+  if (isAemAssetsUrl(p.image)) {
+    return renderAemAssetsPicture(p.image, p.name, p.name, 400);
+  }
+  return createOptimizedPicture(p.image, p.name, false, [{ width: '400' }]);
+}
+
 function productCard(p, layout) {
   const href = getProductLink(p.urlKey, p.sku);
   const card = document.createElement('a');
@@ -211,10 +260,9 @@ function productCard(p, layout) {
   const media = document.createElement('div');
   media.className = 'prr-card__media';
   if (p.image) {
-    const picture = createOptimizedPicture(p.image, p.name, false, [{ width: '400' }]);
-    // Demo dataset points at illustrative asset URLs that may not exist on
-    // the sandbox; degrade cleanly to the styled placeholder instead of a
-    // broken-image glyph. Real (indexed) Catalog Service images just load.
+    const picture = buildPicture(p);
+    // If an image fails (e.g. a demo asset URL that doesn't exist), degrade
+    // cleanly to the styled placeholder instead of a broken-image glyph.
     const img = picture.querySelector('img');
     if (img) {
       img.addEventListener('error', () => {
