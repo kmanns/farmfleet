@@ -837,5 +837,9 @@
         "label": "Link"
       }
     ]
+  },
+  {
+    "id": "catalog-menu",
+    "fields": []
   }
 ]
